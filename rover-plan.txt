@@ -1,0 +1,37 @@
+Each rover has:
+- A position
+- A direction it's facing
+
+Each rover can:
+- Travel to specific coordinates
+- Spin right or left by 90 degree increments
+- Move forward one grid point in the direction it's facing:
+	- N: (0, 1)
+	- E: (1, 0)
+	- S: (0, -1)
+	- W: (-1, 0)
+
+
+Commands are sent as a single long input. 
+- Parse the input into separate lines
+	- Should be at least 3 lines long
+
+- Line 1: establishing grid boundaries for all rovers
+	- Should be input in 2 positive integers
+
+- Line 2: Rover 1's initial position and heading
+	- Should be 2 positive integers within the grid boundaries (between 0 and the x and y boundaries), and 1 letter (N, E, S, W)
+	- Rover needs to be able to take the letter and decode it into x and y movements
+
+- Line 3: Rover 1's movement instructions
+	- Should ONLY consist of L, R, and M (upper or lowercase)
+
+
+	- Rover 1 then transmits new position and heading back to NASA
+		- Should be in xyz format
+
+- (Line 4: Rover 2's initial position and heading)
+- (Line 5: Rover 2's movement instructions, transmits back)
+...and so on until the end of the input
+
+

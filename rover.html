@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Mars Rover</title>
+	<link rel="stylesheet" href="./rover.css">
+</head>
+<body>
+	<p>You are a NASA scientist sending instructions to Mars rovers.</p>
+	<form action="">
+		<fieldset>
+			<legend>How large of an area should the rovers explore?</legend>
+
+			<div class="form-group">
+				<input type="text" id="area-x" name="area-x" placeholder="Ex: 5" pattern="\d+">
+				<label for="area-x">units wide</label>
+			</div>
+			<span> by</span>
+			<div class="form-group">
+				<input type="text" id="area-y" name="area-y" placeholder="Ex: 5" pattern="\d+">
+				<label for="area-y">units long</label>
+			</div>
+		</fieldset>
+
+		<fieldset>
+			<legend>Where should Rover 1 start from on the grid?</legend>
+			<div class="form-group">
+				<label for="starting-x">Enter a starting X coordinate (this must be between 0 and the width of the area)</label>
+				<input id="starting-x" name="starting-x" type="text" pattern="\d+">
+			</div>
+			<div class="form-group">
+				<label for="starting-y">Enter a starting Y coordinate (this must be between 0 and the length of the area)</label>
+				<input id="starting-y" name="starting-y" type="text" pattern="\d+">
+			</div>
+			<div class="form-group">
+				<label for="heading">Enter which direction the rover should be facing to start (Enter N for North, E for East, S for South, or W for West)</label>
+				<input id="heading" name="heading" type="text" pattern="[NESWnesw]">
+			</div>
+		</fieldset>
+
+		<button id="transmit" type="button">Transmit!</button>
+	</form>
+	<script type="text/javascript" src="rover.js"></script>
+</body>
+</html>
+
