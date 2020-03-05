@@ -1,4 +1,4 @@
-function Rover (x, y, z) {
+export function Rover (x, y, z) {
 
 	/****************** Properties ******************/
 
