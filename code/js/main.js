@@ -1,4 +1,4 @@
-/* An object to simulate a Mars rover */
+/* A class to simulate a Mars rover */
 function Rover (x, y, z) {
 
 	/****************** Properties ******************/
@@ -26,8 +26,8 @@ function Rover (x, y, z) {
 
 	/******************* Methods *******************/
 
-	this.readInstructions = function (instructions) {
-		for (const char of instructions) {
+	this.readMovements = function (movements) {
+		for (const char of movements) {
 			switch (char) {
 				case 'L':
 					this.turn('L');
@@ -117,6 +117,14 @@ function Rover (x, y, z) {
 
 /****************** Main functions ******************/
 
+/* Clears any error messages from previous transmissions in the UI */
+function clearErrors() {
+	let errors = select('.error');
+	for (let i=0; i< errors.length; i++) {
+		errors[i].innerHTML = '';
+	}
+}
+
 
 /* Selects the specified DOM element(s). Makes it so you don't have to use querySelector or getElementById/Class constantly, similar to using jQuery */
 function select (selector) {
@@ -136,24 +144,74 @@ function select (selector) {
 	return finalSelection;
 }
 
+
 /* Get the input value of a form field */
 function getVal (selector) {
-	let val = select(selector).getAttribute('value');
+	let val = select(selector).value;
 	if (val == null) {
 		console.error(`${selector} has no value attribute!`);
 	}
-	
 	return val;
-	
-	
 }
 
 
-/*  */
+/* Try to parse an input value into an integer */
+function getNum(selector) {
+	let num = parseInt(getVal(selector));
+
+	if ( isNaN(num) ) {
+		showError(selector, 'Please enter a number.');
+	}
+	else if ( num < 1 ) {
+		showError(selector, 'Please enter a positive number.');
+	}
+	else {
+		return num;
+	}
+}
+
+
+/* Show an error message in the UI */
+function showError(selector, message) {
+	select(`${selector} ~ .error`).innerHTML = message;
+}
+
+
+/* Separate the raw input from the instructions field into commands to pass to the appropriate rover */
 function parseInstructions (instructionsRaw) {
 	let instructions = [];
 
 	let instructionLines = instructionsRaw.split('\n');
+	console.log(instructionLines);
+
+	/* Make sure each rover has 2 lines of instructions */
+	if (instructionLines.length % 2 != 0) {
+		showError('#instructions', 'Each rover should be given 2 lines of instructions.');
+		return;
+	}
+	else {
+		let instrSet = {};
+		for (let i=0; i<instructionLines.length; i++) {
+
+
+			if (i  % 2 == 0) {
+				instrSet = {};
+				let initialPosition = instructionLines[i].split(' ');
+				instrSet.x = parseInt(initialPosition[0]);
+				instrSet.y = parseInt(initialPosition[1]);
+				instrSet.z = initialPosition[2].toUpperCase();
+
+			}
+			else if (i % 2 == 1) {
+				instrSet.movements = instructionLines[i].toUpperCase();
+				instructions.push(instrSet);
+				console.log('Instruction set: ' + instrSet);
+			}
+
+
+		}
+		console.log('Instructions: ' + instructions);
+	}
 
 	return instructions;
 }
@@ -170,12 +228,20 @@ function main () {
 	let instructions = {};
 
 	select('#transmit').addEventListener('click', function () {
-		grid.x = parseInt(getVal('#area-x'));
-		grid.y = parseInt(getVal('#area-y'));
+
+		clearErrors();
+
+		grid.x = getNum('#area-x');
+		grid.y = getNum('#area-y');
 
 		instructionsRaw = getVal('#instructions');
 		instructions = parseInstructions(instructionsRaw);
 
+		for (let i=0; i<instructions.length; i++) {
+			let instrSet = instructions[i];
+			let rover = new Rover(instrSet.x, instrSet.y, instrSet.z);
+			rover.readMovements(instrSet.movements);
+		}
 
 	});
 

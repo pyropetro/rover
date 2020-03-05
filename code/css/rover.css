@@ -5,3 +5,8 @@ input:invalid {
 form fieldset {
 	margin-top: 2em;
 }
+
+.error {
+	font-weight: bold;
+	color: #f00;
+}
