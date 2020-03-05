@@ -1,3 +1,7 @@
 input:invalid {
 	outline: 3px solid #f00;
 }
+
+form fieldset {
+	margin-top: 2em;
+}

@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 </head>
 <body>
-	<div class="container">
+	<div class="container" id="stuff">
 		<div class="row">
 			<div class="col-md-12">
 				<p>You are a NASA scientist sending instructions to Mars rovers.</p>
@@ -28,18 +28,18 @@
 				
 					<fieldset>
 						<legend>What should the rover do?</legend>
-						<h2>Where should the rover start from on the grid?</h2>
 						
 							<div class="row">
-								<div class="col-sm-8">
-									<label for="starting-x-1">Enter a starting X coordinate (this must be between 0 and the width of the area)</label>
+								<div class="col-sm-6">
+									<label for="instructions">Enter instructions for each rover.</label>
 								</div>
-								<div class="col-sm-4">
-									<input required id="starting-x-1" name="starting-x-1" type="text" placeholder="Ex: 2" pattern="\d+">
+								<div class="col-sm-6">
+									<textarea required id="instructions" name="starting-x-1" type="text" placeholder=""></textarea>
+									<p id="error"></p>
 								</div>
 							</div>
 				
-							<div class="row">
+							<!-- <div class="row">
 								<div class="col-sm-8">
 									<label for="starting-y-1">Enter a starting Y coordinate (this must be between 0 and the length of the area)</label>
 								</div>
@@ -55,9 +55,9 @@
 								<div class="col-sm-4">
 									<input required id="heading-1" name="heading-1" type="text" placeholder="Ex: N" pattern="[NESWnesw]">
 								</div>
-							</div>
+							</div> -->
 				
-						<h2>How should the rover move?</h2>
+						<!-- <h2>How should the rover move?</h2>
 							<div class="row">
 								<div class="col-sm-8">
 									<label for="movement">Enter instructions for how the rover should move. Enter L to make it turn left, R to make it turn right, or M to make it move one unit in the direction it's currently facing. You can give it multiple instructions all at once.</label>
@@ -65,10 +65,10 @@
 								<div class="col-sm-4">
 									<input required id="movement" name="movement" type="text" placeholder="Ex: LMMRLM" pattern="[LRMlrm]+">
 								</div>
-							</div>
+							</div> -->
 					</fieldset>
 				
-					<button id="new-rover" type="button">Add instructions for another rover</button>
+					<!-- <button id="new-rover" type="button">Add instructions for another rover</button> -->
 				
 					<button id="transmit" type="button">Transmit!</button>
 				</form>

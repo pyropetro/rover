@@ -126,25 +126,58 @@ function select (selector) {
 	if (selection.length == 1) {
 		finalSelection = selection[0];
 	}
-	else {
+	else if (selection.length > 1) {
 		finalSelection = selection;
+	}
+	else {
+		console.error(`Invalid selector! ${selector}`);
 	}
 
 	return finalSelection;
 }
 
-
-function inputData () {
-
+/* Get the input value of a form field */
+function getVal (selector) {
+	let val = select(selector).getAttribute('value');
+	if (val == null) {
+		console.error(`${selector} has no value attribute!`);
+	}
+	
+	return val;
+	
+	
 }
 
 
+/*  */
+function parseInstructions (instructionsRaw) {
+	let instructions = [];
+
+	let instructionLines = instructionsRaw.split('\n');
+
+	return instructions;
+}
+
 
 function main () {
-	let r = new Rover(2,2,'n');
-	console.log(r.roverToNasa());
 
-	select('#transmit').addEventListener('click', inputData);
+	let grid = {
+		x: 0,
+		y: 0
+	}
+
+	let instructionsRaw = '';
+	let instructions = {};
+
+	select('#transmit').addEventListener('click', function () {
+		grid.x = parseInt(getVal('#area-x'));
+		grid.y = parseInt(getVal('#area-y'));
+
+		instructionsRaw = getVal('#instructions');
+		instructions = parseInstructions(instructionsRaw);
+
+
+	});
 
 }
 
