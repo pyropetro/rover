@@ -1,3 +1,4 @@
+/* An object to simulate a Mars rover */
 function Rover (x, y, z) {
 
 	/****************** Properties ******************/
@@ -25,21 +26,41 @@ function Rover (x, y, z) {
 
 	/******************* Methods *******************/
 
+	this.readInstructions = function (instructions) {
+		for (const char of instructions) {
+			switch (char) {
+				case 'L':
+					this.turn('L');
+					break;
+				case 'R':
+					this.turn('R');
+					break;
+				case 'M':
+					this.move();
+					break;
+				default:
+					alert ('Invalid input');
+			}
+		}
+
+		return this.roverToNasa();
+	}
+
 	/* Move one point in the current direction */
 	this.move = function () {
 
-		/* Figure out how to move in x and y */
-		let x = Math.sin( this.degToRad() );
-		let y = Math.cos( this.degToRad() );
+		/* Figure out how to move in x and y. Finding the sine of the current heading gives you x, and cosine gives you how to move in y */
+		let x = Math.round(Math.sin( this.degToRad() ));
+		let y = Math.round(Math.cos( this.degToRad() ));
 
 		this.x += x;
 		this.y += y;
-	}
+	};
 
 	/* Convert heading in degrees to radians */
 	this.degToRad = function () {
 		return this.degrees * ( Math.PI / 180 );
-	}
+	};
 
 	/* Turn 90 degrees to the left or right */
 	this.turn = function (direction) {
@@ -57,9 +78,9 @@ function Rover (x, y, z) {
 		this.normalizeDirection();
 		this.updateDirection();
 
-	}
+	};
 
-	/*  Make sure degrees stays between 0 and 359 */
+	/*  Make sure degrees stays between 0 and 359 to make converting back to direction names easier */
 	this.normalizeDirection = function () {
 		if (this.degrees < 0) {
 			this.degrees += this.fullTurn;
@@ -67,7 +88,7 @@ function Rover (x, y, z) {
 		else if (this.degrees >= this.fullTurn) {
 			this.degrees -= this.fullTurn;
 		}
-	}
+	};
 
 	/* Find out which direction is being faced. North is assumed to be 0 degrees */
 	this.updateDirection = function () {
@@ -79,14 +100,54 @@ function Rover (x, y, z) {
 		let dirFound = dirs.find(key => this.directions[key] == this.degrees);
 
 		this.z = dirFound;
-	}
+	};
 
 
 	/* Transmit new position and heading back to NASA */
-	this.update = function () {
+	this.roverToNasa = function () {
 
-		return `${this.x}
-				${this.y}
-				${this.z}`;
-	}
+		return `${this.x} ${this.y} ${this.z}`;
+	};
 }
+
+
+
+
+
+
+/****************** Main functions ******************/
+
+
+/* Selects the specified DOM element(s). Makes it so you don't have to use querySelector or getElementById/Class constantly, similar to using jQuery */
+function select (selector) {
+	let selection = document.querySelectorAll(selector);
+	let finalSelection = null;
+	
+	if (selection.length == 1) {
+		finalSelection = selection[0];
+	}
+	else {
+		finalSelection = selection;
+	}
+
+	return finalSelection;
+}
+
+
+function inputData () {
+
+}
+
+
+
+function main () {
+	let r = new Rover(2,2,'n');
+	console.log(r.roverToNasa());
+
+	select('#transmit').addEventListener('click', inputData);
+
+}
+
+
+document.addEventListener('DOMContentLoaded', main);
+

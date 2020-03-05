@@ -12,26 +12,39 @@ Each rover can:
 	- W: (-1, 0)
 
 
-Commands are sent as a single long input. 
-- Parse the input into separate lines
-	- Should be at least 3 lines long
 
-- Line 1: establishing grid boundaries for all rovers
+Commands are sent through a form. 
+
+- Input set 1: establishing grid boundaries for all rovers
 	- Should be input in 2 positive integers
 
-- Line 2: Rover 1's initial position and heading
+- Input set 2: Rover 1's initial position and heading
 	- Should be 2 positive integers within the grid boundaries (between 0 and the x and y boundaries), and 1 letter (N, E, S, W)
 	- Rover needs to be able to take the letter and decode it into x and y movements
 
-- Line 3: Rover 1's movement instructions
+- Input set 3: Rover 1's movement instructions
 	- Should ONLY consist of L, R, and M (upper or lowercase)
-
-
 	- Rover 1 then transmits new position and heading back to NASA
 		- Should be in xyz format
 
-- (Line 4: Rover 2's initial position and heading)
-- (Line 5: Rover 2's movement instructions, transmits back)
-...and so on until the end of the input
+- (Input set 4: Rover 2's initial position and heading)
+- (Input set 5: Rover 2's movement instructions, transmits back)
+...and so on until the end of the input.
 
 
+
+When the user clicks the button to submit their input:
+
+- Validate input
+	- Make sure starting x and y are within bounds of grid
+	- Make sure starting direction is n, e, s, or w
+		- Lowercase all
+	- Parse movement instructions 
+
+- Divide up the input into properties of an object
+	- Group the input for each rover separately
+
+- For each rover's instructions that were input:
+	- Create a new Rover instance
+		- Use the initial position input in the constructor
+	- Parse 

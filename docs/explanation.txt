@@ -1,0 +1,3 @@
+This is written in HTML and vanilla JavaScript. (I did import jQuery so I could use Bootstrap for the UI, but otherwise I kept my code plain JS.)
+
+I made the arbitrary assumption that North is 0 degrees, and that turning 90 deg to the right (i.e. clockwise) from North would make you face East.
