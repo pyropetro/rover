@@ -3,44 +3,81 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Mars Rover</title>
-	<link rel="stylesheet" href="./rover.css">
+	<link rel="stylesheet" href="../css/rover.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 </head>
 <body>
-	<p>You are a NASA scientist sending instructions to Mars rovers.</p>
-	<form action="">
-		<fieldset>
-			<legend>How large of an area should the rovers explore?</legend>
-
-			<div class="form-group">
-				<input type="text" id="area-x" name="area-x" placeholder="Ex: 5" pattern="\d+">
-				<label for="area-x">units wide</label>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<p>You are a NASA scientist sending instructions to Mars rovers.</p>
+				<form action="">
+					<fieldset>
+						<legend>How large of an area should the rovers explore?</legend>
+				
+						<span class="form-group">
+							<input required type="text" id="area-x" name="area-x" placeholder="Ex: 5" pattern="\d+">
+							<label for="area-x">units wide</label>
+						</span>
+						<span> by</span>
+						<span class="form-group">
+							<input required type="text" id="area-y" name="area-y" placeholder="Ex: 5" pattern="\d+">
+							<label for="area-y">units long</label>
+						</span>
+					</fieldset>
+				
+					<fieldset>
+						<legend>What should the rover do?</legend>
+						<h2>Where should the rover start from on the grid?</h2>
+						
+							<div class="row">
+								<div class="col-sm-8">
+									<label for="starting-x-1">Enter a starting X coordinate (this must be between 0 and the width of the area)</label>
+								</div>
+								<div class="col-sm-4">
+									<input required id="starting-x-1" name="starting-x-1" type="text" placeholder="Ex: 2" pattern="\d+">
+								</div>
+							</div>
+				
+							<div class="row">
+								<div class="col-sm-8">
+									<label for="starting-y-1">Enter a starting Y coordinate (this must be between 0 and the length of the area)</label>
+								</div>
+								<div class="col-sm-4">
+									<input required id="starting-y-1" name="starting-y-1" type="text" placeholder="Ex: 3" pattern="\d+">
+								</div>
+							</div>
+				
+							<div class="row">
+								<div class="col-sm-8">
+									<label for="heading-1">Enter which direction the rover should be facing to start (Enter N for North, E for East, S for South, or W for West)</label>
+								</div>
+								<div class="col-sm-4">
+									<input required id="heading-1" name="heading-1" type="text" placeholder="Ex: N" pattern="[NESWnesw]">
+								</div>
+							</div>
+				
+						<h2>How should the rover move?</h2>
+							<div class="row">
+								<div class="col-sm-8">
+									<label for="movement">Enter instructions for how the rover should move. Enter L to make it turn left, R to make it turn right, or M to make it move one unit in the direction it's currently facing. You can give it multiple instructions all at once.</label>
+								</div>
+								<div class="col-sm-4">
+									<input required id="movement" name="movement" type="text" placeholder="Ex: LMMRLM" pattern="[LRMlrm]+">
+								</div>
+							</div>
+					</fieldset>
+				
+					<button id="new-rover" type="button">Add instructions for another rover</button>
+				
+					<button id="transmit" type="button">Transmit!</button>
+				</form>
 			</div>
-			<span> by</span>
-			<div class="form-group">
-				<input type="text" id="area-y" name="area-y" placeholder="Ex: 5" pattern="\d+">
-				<label for="area-y">units long</label>
-			</div>
-		</fieldset>
-
-		<fieldset>
-			<legend>Where should Rover 1 start from on the grid?</legend>
-			<div class="form-group">
-				<label for="starting-x">Enter a starting X coordinate (this must be between 0 and the width of the area)</label>
-				<input id="starting-x" name="starting-x" type="text" pattern="\d+">
-			</div>
-			<div class="form-group">
-				<label for="starting-y">Enter a starting Y coordinate (this must be between 0 and the length of the area)</label>
-				<input id="starting-y" name="starting-y" type="text" pattern="\d+">
-			</div>
-			<div class="form-group">
-				<label for="heading">Enter which direction the rover should be facing to start (Enter N for North, E for East, S for South, or W for West)</label>
-				<input id="heading" name="heading" type="text" pattern="[NESWnesw]">
-			</div>
-		</fieldset>
-
-		<button id="transmit" type="button">Transmit!</button>
-	</form>
-	<script type="text/javascript" src="rover.js"></script>
+		</div>
+	</div>
+	<script type="text/javascript" src="../js/main.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </body>
 </html>
 

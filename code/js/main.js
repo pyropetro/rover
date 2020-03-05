@@ -1,5 +1,3 @@
-
-
 function Rover (x, y, z) {
 
 	/****************** Properties ******************/
@@ -92,4 +90,3 @@ function Rover (x, y, z) {
 				${this.z}`;
 	}
 }
-
