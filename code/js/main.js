@@ -8,6 +8,8 @@ function Rover (x, y, z) {
 	this.y = y;
 	this.z = z;
 
+	console.log(`creating Rover at ${this.x}, ${this.y}, ${this.z}`);
+
 	/* Enable rover to look up degree equivalent of heading */
 	this.directions = {
 		n: 0,
@@ -26,28 +28,41 @@ function Rover (x, y, z) {
 
 	/******************* Methods *******************/
 
-	this.readMovements = function (movements) {
+	this.readMovements = function (m) {
+		let movements = m.toLowerCase();
+		console.log('reading movements: ' + movements);
+
+		let result = '';
+		let valid = true;
+
 		for (const char of movements) {
 			switch (char) {
-				case 'L':
-					this.turn('L');
+				case 'l':
+					this.turn('l');
 					break;
-				case 'R':
-					this.turn('R');
+				case 'r':
+					this.turn('r');
 					break;
-				case 'M':
+				case 'm':
 					this.move();
 					break;
 				default:
-					alert ('Invalid input');
+					valid = false;
 			}
 		}
 
-		return this.roverToNasa();
+		if (!valid) {
+			result = 'Invalid input';
+		}
+		else {
+			result = this.roverToNasa();
+		}
+		return result;
 	}
 
 	/* Move one point in the current direction */
 	this.move = function () {
+		console.log('moving');
 
 		/* Figure out how to move in x and y. Finding the sine of the current heading gives you x, and cosine gives you how to move in y */
 		let x = Math.round(Math.sin( this.degToRad() ));
@@ -55,6 +70,7 @@ function Rover (x, y, z) {
 
 		this.x += x;
 		this.y += y;
+		console.log('new position: ' + this.x + this.y);
 	};
 
 	/* Convert heading in degrees to radians */
@@ -65,10 +81,10 @@ function Rover (x, y, z) {
 	/* Turn 90 degrees to the left or right */
 	this.turn = function (direction) {
 
-		if (direction == 'L') {
+		if (direction == 'l') {
 			this.degrees -= this.turnIncrement;
 		}
-		else if (direction == 'R') {
+		else if (direction == 'r') {
 			this.degrees += this.turnIncrement;
 		}
 		else {
@@ -77,6 +93,8 @@ function Rover (x, y, z) {
 
 		this.normalizeDirection();
 		this.updateDirection();
+
+		console.log('new direction: ' + this.z);
 
 	};
 
@@ -105,8 +123,9 @@ function Rover (x, y, z) {
 
 	/* Transmit new position and heading back to NASA */
 	this.roverToNasa = function () {
+		let result = `${this.x} ${this.y} ${this.z}`;
 
-		return `${this.x} ${this.y} ${this.z}`;
+		return result;
 	};
 }
 
@@ -118,11 +137,13 @@ function Rover (x, y, z) {
 /****************** Main functions ******************/
 
 /* Clears any error messages from previous transmissions in the UI */
-function clearErrors() {
+function reset() {
 	let errors = select('.error');
 	for (let i=0; i< errors.length; i++) {
 		errors[i].innerHTML = '';
 	}
+
+	select('#results').innerHTML = '';
 }
 
 
@@ -199,18 +220,18 @@ function parseInstructions (instructionsRaw) {
 				let initialPosition = instructionLines[i].split(' ');
 				instrSet.x = parseInt(initialPosition[0]);
 				instrSet.y = parseInt(initialPosition[1]);
-				instrSet.z = initialPosition[2].toUpperCase();
+				instrSet.z = initialPosition[2].toLowerCase();
 
 			}
 			else if (i % 2 == 1) {
-				instrSet.movements = instructionLines[i].toUpperCase();
+				instrSet.movements = instructionLines[i].toLowerCase();
 				instructions.push(instrSet);
-				console.log('Instruction set: ' + instrSet);
+				console.log('Instruction set: ' + JSON.stringify(instrSet));
 			}
 
 
 		}
-		console.log('Instructions: ' + instructions);
+		console.log('Instructions: ' + JSON.stringify(instructions));
 	}
 
 	return instructions;
@@ -229,7 +250,7 @@ function main () {
 
 	select('#transmit').addEventListener('click', function () {
 
-		clearErrors();
+		reset();
 
 		grid.x = getNum('#area-x');
 		grid.y = getNum('#area-y');
@@ -240,7 +261,9 @@ function main () {
 		for (let i=0; i<instructions.length; i++) {
 			let instrSet = instructions[i];
 			let rover = new Rover(instrSet.x, instrSet.y, instrSet.z);
-			rover.readMovements(instrSet.movements);
+			let result = rover.readMovements(instrSet.movements);
+
+			select('#results').innerHTML += `Rover ${i + 1}: ${result}<br>`;
 		}
 
 	});

@@ -10,3 +10,7 @@ form fieldset {
 	font-weight: bold;
 	color: #f00;
 }
+
+#results {
+	text-transform: uppercase;
+}
