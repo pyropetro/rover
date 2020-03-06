@@ -11,6 +11,6 @@ form fieldset {
 	color: #f00;
 }
 
-#results {
+.uppercase {
 	text-transform: uppercase;
 }

@@ -87,9 +87,9 @@ function Rover (x, y, z) {
 		else if (direction == 'r') {
 			this.degrees += this.turnIncrement;
 		}
-		else {
+		/*else {
 			alert('Invalid direction!');
-		}
+		}*/
 
 		this.normalizeDirection();
 		this.updateDirection();
@@ -167,7 +167,7 @@ function select (selector) {
 
 
 /* Get the input value of a form field */
-function getVal (selector) {
+function getValue (selector) {
 	let val = select(selector).value;
 	if (val == null) {
 		console.error(`${selector} has no value attribute!`);
@@ -178,13 +178,15 @@ function getVal (selector) {
 
 /* Try to parse an input value into an integer */
 function getNum(selector) {
-	let num = parseInt(getVal(selector));
+	let num = parseInt(getValue(selector));
 
 	if ( isNaN(num) ) {
 		showError(selector, 'Please enter a number.');
+		return 0;
 	}
 	else if ( num < 1 ) {
 		showError(selector, 'Please enter a positive number.');
+		return 0;
 	}
 	else {
 		return num;
@@ -201,40 +203,85 @@ function showError(selector, message) {
 /* Separate the raw input from the instructions field into commands to pass to the appropriate rover */
 function parseInstructions (instructionsRaw) {
 	let instructions = [];
-
-	let instructionLines = instructionsRaw.split('\n');
-	console.log(instructionLines);
+	let instructionLines = instructionsRaw.trim().split('\n');
+	let instrSet = {};
+	let instructionError = '';
+	let noErrors = true;
 
 	/* Make sure each rover has 2 lines of instructions */
 	if (instructionLines.length % 2 != 0) {
 		showError('#instructions', 'Each rover should be given 2 lines of instructions.');
 		return;
 	}
-	else {
-		let instrSet = {};
-		for (let i=0; i<instructionLines.length; i++) {
 
 
-			if (i  % 2 == 0) {
-				instrSet = {};
-				let initialPosition = instructionLines[i].split(' ');
-				instrSet.x = parseInt(initialPosition[0]);
-				instrSet.y = parseInt(initialPosition[1]);
-				instrSet.z = initialPosition[2].toLowerCase();
 
+	for (let i=0; i<instructionLines.length; i++) {
+		let currentLine = instructionLines[i];
+		let instrLine1 = [];
+		let instrLine2 = '';
+
+		if (i  % 2 == 0) {
+			
+			instrSet = {};
+			instrLine1 = currentLine.split(' ');
+			instrSet.x = parseInt(instrLine1[0]);
+			instrSet.y = parseInt(instrLine1[1]);
+			instrSet.z = instrLine1[2].toLowerCase();
+
+			if ( isNaN(instrSet.x)) {
+				instructionError += `Invalid X coordinate: ${instrLine1[0]}<br>`;
+				noErrors = false;
 			}
-			else if (i % 2 == 1) {
-				instrSet.movements = instructionLines[i].toLowerCase();
-				instructions.push(instrSet);
-				console.log('Instruction set: ' + JSON.stringify(instrSet));
+			
+			if ( isNaN(instrSet.y)) {
+				instructionError += `Invalid Y coordinate: ${instrLine1[1]}<br>`;
+				noErrors = false;
 			}
 
+
+			let zIsValid = new RegExp(/[nesw]+/).test(instrSet.z);
+
+			if ( !zIsValid ) {
+				instructionError += `Invalid heading: ${instrLine1[2]}<br>`;
+				noErrors = false;
+			}
 
 		}
-		console.log('Instructions: ' + JSON.stringify(instructions));
+		else if (i % 2 == 1) {
+
+			instrLine2 = currentLine.toLowerCase();
+
+			let mIsValid = new RegExp(/[lrm]+/).test(instrLine2);
+
+			console.log(instrLine2);
+
+			if (!mIsValid) {
+				instructionError += `Invalid movement instructions: ${instrLine2}<br>`;
+				noErrors = false;
+			}
+			else {
+				instrSet.movements = instrLine2;
+			}
+
+			instructions.push(instrSet);
+			console.log('Instruction set: ' + JSON.stringify(instrSet));
+			
+		}
+
+
 	}
 
-	return instructions;
+
+		
+	if (!noErrors) {
+		showError('#instructions', instructionError);
+		return;
+	}
+	else {
+		console.log('Instructions: ' + JSON.stringify(instructions));
+		return instructions;
+	}
 }
 
 
@@ -248,6 +295,7 @@ function main () {
 	let instructionsRaw = '';
 	let instructions = {};
 
+
 	select('#transmit').addEventListener('click', function () {
 
 		reset();
@@ -255,16 +303,22 @@ function main () {
 		grid.x = getNum('#area-x');
 		grid.y = getNum('#area-y');
 
-		instructionsRaw = getVal('#instructions');
-		instructions = parseInstructions(instructionsRaw);
+		console.log(grid.x + ' ' + grid.y);
 
-		for (let i=0; i<instructions.length; i++) {
-			let instrSet = instructions[i];
-			let rover = new Rover(instrSet.x, instrSet.y, instrSet.z);
-			let result = rover.readMovements(instrSet.movements);
+		if (grid.x > 0 || grid.y > 0 ) {
 
-			select('#results').innerHTML += `Rover ${i + 1}: ${result}<br>`;
+			instructionsRaw = getValue('#instructions');
+			instructions = parseInstructions(instructionsRaw);
+
+			for (let i=0; i<instructions.length; i++) {
+				let instrSet = instructions[i];
+				let rover = new Rover(instrSet.x, instrSet.y, instrSet.z);
+				let result = rover.readMovements(instrSet.movements);
+
+				select('#results').innerHTML += `Rover ${i + 1}: <span class="uppercase">${result}</span><br>`;
+			}
 		}
+
 
 	});
 
