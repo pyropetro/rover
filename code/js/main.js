@@ -194,6 +194,12 @@ function getNum(selector) {
 }
 
 
+/* Make sure string is in correct format */
+function isValidString(str, regex) {
+	return new RegExp(regex).test(str);
+}
+
+
 /* Show an error message in the UI */
 function showError(selector, message) {
 	select(`${selector} ~ .error`).innerHTML = message;
@@ -215,8 +221,60 @@ function parseInstructions (instructionsRaw) {
 	}
 
 
+	/*************** Line 1 **************/
 
+	/* Check if separated by spaces */
+	/* - If not, add error */
+	/* - If so, split at spaces */
+
+	/* Check if first character is a number */
+	/* - If not, add error */
+	/* - If so, check if it's between 0 and grid bound x */
+	/* 		- If not, add error */
+	/*		- If so, add it to temp obj x */
+
+	/* Check if second character is a number */
+	/* - If not, add error */
+	/* - If so, check if it's between 0 and grid bound x */
+	/* 		- If not, add error */
+	/*		- If so, add it to temp obj y */
+
+	/* Check if third character is n,e,s,w */
+	/* - If not, add error */
+	/* - If so, add it to temp obj z */
+
+
+
+
+	/*************** Line 2 **************/
+
+	/* Check if line 2 is l,r,m */
+	/* - If not, add error */
+	/* - If so, add it to temp obj movement */
+
+
+
+	/* If no errors, push the temp obj to the instruction array */
+	/* If errors, push a null */
+
+
+
+
+
+/*
 	for (let i=0; i<instructionLines.length; i++) {
+		if (i  % 2 == 0) {
+
+		}
+		else if (i % 2 == 1) {
+
+		}
+	}*/
+
+
+
+
+	/*for (let i=0; i<instructionLines.length; i++) {
 		let currentLine = instructionLines[i];
 		let instrLine1 = [];
 		let instrLine2 = '';
@@ -240,7 +298,7 @@ function parseInstructions (instructionsRaw) {
 			}
 
 
-			let zIsValid = new RegExp(/[nesw]+/).test(instrSet.z);
+			let zIsValid = new RegExp(regex/.test[nesw]+/).test(instrSet.z);
 
 			if ( !zIsValid ) {
 				instructionError += `Invalid heading: ${instrLine1[2]}<br>`;
@@ -281,7 +339,7 @@ function parseInstructions (instructionsRaw) {
 	else {
 		console.log('Instructions: ' + JSON.stringify(instructions));
 		return instructions;
-	}
+	}*/
 }
 
 
@@ -306,8 +364,10 @@ function main () {
 		console.log(grid.x + ' ' + grid.y);
 
 		if (grid.x > 0 || grid.y > 0 ) {
-
 			instructionsRaw = getValue('#instructions');
+		}
+
+
 			instructions = parseInstructions(instructionsRaw);
 
 			for (let i=0; i<instructions.length; i++) {
