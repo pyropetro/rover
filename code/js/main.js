@@ -200,7 +200,7 @@ function showError(selector, message) {
 
 /* Add a line to the instruction errors output in the UI */
 function addInstrError(lineNum, elementName, elementVal, message) {
-	select('#instructions ~ .error').innerHTML += `Line ${lineNum}: Invalid ${elementName} "${elementVal}." ${message}<br>`;
+	select('#instructions ~ .error').innerHTML += `<p>Line ${lineNum}: Invalid ${elementName} "${elementVal}." ${message}</p>`;
 }
 
 
@@ -213,17 +213,21 @@ function isValidString(str, regex) {
 }
 
 function isValidPosition(lineNum, x, y, grid) {
-	if (x <= 0 || grid.x < x) {
+	let hasErrors = false;
+
+	if (x < 0 || grid.x < x) {
 		addInstrError(lineNum, 'X coordinate', x, `Must be between 0 and ${grid.x}.`);
-		return false;
+		hasErrors = true;
 	}
 	
-	if (y <= 0 || grid.y < y) {
+	if (y < 0 || grid.y < y) {
 		addInstrError(lineNum, 'Y coordinate', y, `Must be between 0 and ${grid.y}.`);
-		return false;
+		hasErrors = true;
 	}
 
-	return true;
+
+
+	return hasErrors ? false : true;
 }
 
 
@@ -238,12 +242,24 @@ function isLine1CorrectFormat (lineNum, line1) {
 		return splitLine;
 	}*/
 
-	if (!isValidString(line1, /\d+ \d+ [nesw]/)) {
+	if (!isValidString(line1, /^\d+ \d+ [nesw]$/)) {
 		addInstrError(lineNum, 'formatting', line1, 'Should be 2 numbers and a direction name (N, E, S, or W), separated by spaces.');
 		return false;
 	}
 	else {
 		return line1.split(' ');
+	}
+}
+
+/* Check if Line 2 is separated by spaces */
+function isLine2CorrectFormat (lineNum, line2) {
+
+	if (!isValidString(line2, /^[lrm]+$/)) {
+		addInstrError(lineNum, 'formatting', line2, 'Should be any combination of L, R, and/or M');
+		return false;
+	}
+	else {
+		return line2;
 	}
 }
 
@@ -264,8 +280,6 @@ function isInitXYValid (lineNum, splitLine, grid) {
 	initialPosition.z = splitLine[2];
 
 
-
-	
 	if (!isValidPosition(lineNum, initialPosition.x, initialPosition.y, grid)) {
 		return false;
 	}
@@ -291,6 +305,7 @@ function parseInstructions (instructionsRaw, grid) {
 
 	for (let i=0; i<instructionLines.length; i++) {
 		let currentLine = instructionLines[i];
+		let lineNum = i + 1;
 		let instrLine1 = [];
 		let instrLine2 = '';
 
@@ -301,16 +316,22 @@ function parseInstructions (instructionsRaw, grid) {
 			instrSet = {};
 			instrLine1 = currentLine;
 			
-			splitLine = isLine1CorrectFormat(i, instrLine1);
-			initialPosition = isInitXYValid(i, splitLine, grid);
+			splitLine = isLine1CorrectFormat(lineNum, instrLine1);
+			initialPosition = isInitXYValid(lineNum, splitLine, grid);
 
 			if (!splitLine || !initialPosition) {
 				noErrors = false;
-				continue;
 			}
 		}
 		else if (i % 2 == 1) {
+			let line2 = '';
 
+			instrLine2 = currentLine;
+			line2 = isLine2CorrectFormat(lineNum, instrLine2);
+
+			if (!line2) {
+				noErrors = false;
+			}
 		}
 	}
 
