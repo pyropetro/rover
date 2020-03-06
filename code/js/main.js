@@ -134,16 +134,16 @@ function Rover (x, y, z) {
 
 
 
-/****************** Main functions ******************/
+/****************** UI functions ******************/
 
 /* Clears any error messages from previous transmissions in the UI */
 function reset() {
-	let errors = select('.error');
+	let errors = select('.error, #results');
 	for (let i=0; i< errors.length; i++) {
 		errors[i].innerHTML = '';
 	}
 
-	select('#results').innerHTML = '';
+	/*select('#results').innerHTML = '';*/
 }
 
 
@@ -193,39 +193,132 @@ function getNum(selector) {
 	}
 }
 
+/* Show an error message in the UI */
+function showError(selector, message) {
+	select(`${selector} ~ .error`).innerHTML = message;
+}
+
+/* Add a line to the instruction errors output in the UI */
+function addInstrError(lineNum, elementName, elementVal, message) {
+	select('#instructions ~ .error').innerHTML += `Line ${lineNum}: Invalid ${elementName} "${elementVal}." ${message}<br>`;
+}
+
+
+
+/****************** Validation functions ******************/
 
 /* Make sure string is in correct format */
 function isValidString(str, regex) {
 	return new RegExp(regex).test(str);
 }
 
+function isValidPosition(lineNum, x, y, grid) {
+	if (x <= 0 || grid.x < x) {
+		addInstrError(lineNum, 'X coordinate', x, `Must be between 0 and ${grid.x}.`);
+		return false;
+	}
+	
+	if (y <= 0 || grid.y < y) {
+		addInstrError(lineNum, 'Y coordinate', y, `Must be between 0 and ${grid.y}.`);
+		return false;
+	}
 
-/* Show an error message in the UI */
-function showError(selector, message) {
-	select(`${selector} ~ .error`).innerHTML = message;
+	return true;
 }
 
 
-/* Separate the raw input from the instructions field into commands to pass to the appropriate rover */
-function parseInstructions (instructionsRaw) {
+/* Check if Line 1 is separated by spaces */
+function isLine1CorrectFormat (lineNum, line1) {
+
+	/*if (splitLine.length <= 1) {
+		addInstrError(lineNum, 'positioning', line1, 'Make sure coordinates are separated by spaces.');
+		return false;
+	}
+	else {
+		return splitLine;
+	}*/
+
+	if (!isValidString(line1, /\d+ \d+ [nesw]/)) {
+		addInstrError(lineNum, 'formatting', line1, 'Should be 2 numbers and a direction name (N, E, S, or W), separated by spaces.');
+		return false;
+	}
+	else {
+		return line1.split(' ');
+	}
+}
+
+
+/* Check if Line 1 initial position entries are valid */
+function isInitXYValid (lineNum, splitLine, grid) {
+	let initialPosition = {};
+	/*let x = ;
+	let y = splitLine[1];
+	let z = splitLine[1];*/
+
+	if (!splitLine) {
+		return false;
+	}
+
+	initialPosition.x = parseInt(splitLine[0]);
+	initialPosition.y = parseInt(splitLine[1]);
+	initialPosition.z = splitLine[2];
+
+
+
+	
+	if (!isValidPosition(lineNum, initialPosition.x, initialPosition.y, grid)) {
+		return false;
+	}
+	else {
+		return initialPosition;
+	}
+}
+
+
+/* Separate the raw input from the instructions field into commands to pass to the appropriate rover, if valid */
+function parseInstructions (instructionsRaw, grid) {
 	let instructions = [];
-	let instructionLines = instructionsRaw.trim().split('\n');
-	let instrSet = {};
-	let instructionError = '';
+	let instructionLines = instructionsRaw.trim().toLowerCase().split('\n');
+	let instrSet = null;
 	let noErrors = true;
 
 	/* Make sure each rover has 2 lines of instructions */
-	if (instructionLines.length % 2 != 0) {
+	if (instructionsRaw.length == 0 || instructionLines.length % 2 != 0) {
 		showError('#instructions', 'Each rover should be given 2 lines of instructions.');
 		return;
 	}
 
 
-	/*************** Line 1 **************/
+	for (let i=0; i<instructionLines.length; i++) {
+		let currentLine = instructionLines[i];
+		let instrLine1 = [];
+		let instrLine2 = '';
+
+		/*************** Validate Line 1 **************/
+		if (i  % 2 == 0) {
+			let splitLine = [];
+			let initialPosition = {};
+			instrSet = {};
+			instrLine1 = currentLine;
+			
+			splitLine = isLine1CorrectFormat(i, instrLine1);
+			initialPosition = isInitXYValid(i, splitLine, grid);
+
+			if (!splitLine || !initialPosition) {
+				noErrors = false;
+				continue;
+			}
+		}
+		else if (i % 2 == 1) {
+
+		}
+	}
+
 
 	/* Check if separated by spaces */
 	/* - If not, add error */
 	/* - If so, split at spaces */
+
 
 	/* Check if first character is a number */
 	/* - If not, add error */
@@ -368,16 +461,21 @@ function main () {
 		}
 
 
-			instructions = parseInstructions(instructionsRaw);
+		instructions = parseInstructions(instructionsRaw, grid);
 
-			for (let i=0; i<instructions.length; i++) {
-				let instrSet = instructions[i];
-				let rover = new Rover(instrSet.x, instrSet.y, instrSet.z);
-				let result = rover.readMovements(instrSet.movements);
+		for (let i=0; i<instructions.length; i++) {
+			let instrSet = instructions[i];
 
-				select('#results').innerHTML += `Rover ${i + 1}: <span class="uppercase">${result}</span><br>`;
+			if (instrSet == null) {
+
 			}
+
+			let rover = new Rover(instrSet.x, instrSet.y, instrSet.z);
+			let result = rover.readMovements(instrSet.movements);
+
+			select('#results').innerHTML += `Rover ${i + 1}: <span class="uppercase">${result}</span><br>`;
 		}
+		
 
 
 	});
