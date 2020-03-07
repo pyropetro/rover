@@ -203,6 +203,10 @@ function addInstrError(lineNum, elementName, elementVal, message) {
 	select('#instructions ~ .error').innerHTML += `<p>Line ${lineNum}: Invalid ${elementName} "${elementVal}." ${message}</p>`;
 }
 
+function printResult(roverNum, result) {
+	select('#results').innerHTML += `<p>Rover ${roverNum}: <span class="uppercase">${result}</span></p>`;
+}
+
 
 
 /****************** Validation functions ******************/
@@ -291,15 +295,17 @@ function isInitXYValid (lineNum, splitLine, grid) {
 
 /* Separate the raw input from the instructions field into commands to pass to the appropriate rover, if valid */
 function parseInstructions (instructionsRaw, grid) {
-	let instructions = [];
 	let instructionLines = instructionsRaw.trim().toLowerCase().split('\n');
+	console.log(instructionLines);
 	let instrSet = null;
+	let initialPosition = null;
 	let noErrors = true;
+	let parsedInstructions = [];
 
 	/* Make sure each rover has 2 lines of instructions */
 	if (instructionsRaw.length == 0 || instructionLines.length % 2 != 0) {
 		showError('#instructions', 'Each rover should be given 2 lines of instructions.');
-		return;
+		noErrors = false;
 	}
 
 
@@ -312,8 +318,6 @@ function parseInstructions (instructionsRaw, grid) {
 		/*************** Validate Line 1 **************/
 		if (i  % 2 == 0) {
 			let splitLine = [];
-			let initialPosition = {};
-			instrSet = {};
 			instrLine1 = currentLine;
 			
 			splitLine = isLine1CorrectFormat(lineNum, instrLine1);
@@ -321,19 +325,39 @@ function parseInstructions (instructionsRaw, grid) {
 
 			if (!splitLine || !initialPosition) {
 				noErrors = false;
+				continue;
 			}
 		}
 		else if (i % 2 == 1) {
-			let line2 = '';
+			line2 = '';
 
-			instrLine2 = currentLine;
+			instrLine2 = currentLine.replace(/\s/g, '');
 			line2 = isLine2CorrectFormat(lineNum, instrLine2);
+				console.log('line 2: ' + line2);
 
 			if (!line2) {
 				noErrors = false;
 			}
+
+			if (!noErrors) {
+				instrSet = null;
+			}
+			else {
+				instrSet = {};
+				instrSet.x = initialPosition.x;
+				instrSet.y = initialPosition.y;
+				instrSet.z = initialPosition.z;
+				instrSet.movements = line2;
+			}
+				console.log(JSON.stringify(instrSet));
+				parsedInstructions.push(instrSet);
 		}
+		noErrors = true;
+		instrSet = null;
 	}
+
+	console.log('Instructions: ' + JSON.stringify(parsedInstructions));
+	return parsedInstructions;
 
 
 	/* Check if separated by spaces */
@@ -486,15 +510,20 @@ function main () {
 
 		for (let i=0; i<instructions.length; i++) {
 			let instrSet = instructions[i];
+			console.log(JSON.stringify(instrSet));
+
+			let roverNum = i + 1;
 
 			if (instrSet == null) {
+				printResult(roverNum, 'Invalid input');
+			}
+			else {
+				let rover = new Rover(instrSet.x, instrSet.y, instrSet.z);
+				let result = rover.readMovements(instrSet.movements);
 
+				printResult(roverNum, result);
 			}
 
-			let rover = new Rover(instrSet.x, instrSet.y, instrSet.z);
-			let result = rover.readMovements(instrSet.movements);
-
-			select('#results').innerHTML += `Rover ${i + 1}: <span class="uppercase">${result}</span><br>`;
 		}
 		
 
