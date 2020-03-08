@@ -1,99 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Mars Rover</title>
-	<link rel="stylesheet" href="../css/rover.css">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-</head>
-<body>
-	<div class="container" id="stuff">
-		<div class="row">
-			<div class="col-md-12">
-				<p>You are a NASA scientist sending instructions to Mars rovers.</p>
-				<form action="">
-					<fieldset>
-						<legend>How large of an area should the rovers explore?</legend>
-				
-						<span class="form-group">
-							<input required type="text" id="grid-x" name="grid-x" placeholder="Ex: 5" pattern="^\d+$">
-							<label for="grid-x">units wide</label>
-							<p class="error"></p>
-						</span>
-						<span> by</span>
-						<span class="form-group">
-							<input required type="text" id="grid-y" name="grid-y" placeholder="Ex: 5" pattern="^\d+$">
-							<label for="grid-y">units long</label>
-							<p class="error"></p>
-						</span>
-					</fieldset>
-				
-					<fieldset>
-						<legend>What should the rover do?</legend>
-						
-							<div class="row">
-								<div class="col-sm-6">
-									<label for="instructions">Enter instructions for each rover.</label>
-								</div>
-								<div class="col-sm-6">
-									<textarea required id="instructions" name="instructions" type="text" placeholder=""></textarea>
-									<p class="error"></p>
-								</div>
-							</div>
-				
-							<!-- <div class="row">
-								<div class="col-sm-8">
-									<label for="starting-x">Enter a starting x coordinate (this must be between 0 and the length of the area)</label>
-								</div>
-								<div class="col-sm-4">
-									<input required id="starting-x" name="starting-x" type="text" placeholder="Ex: 3" pattern="^\d+$">
-									<p class="error"></p>
-								</div>
-							</div>
-				
-							<div class="row">
-								<div class="col-sm-8">
-									<label for="starting-y">Enter a starting Y coordinate (this must be between 0 and the length of the area)</label>
-								</div>
-								<div class="col-sm-4">
-									<input required id="starting-y" name="starting-y" type="text" placeholder="Ex: 3" pattern="^\d+$">
-									<p class="error"></p>
-								</div>
-							</div>
-				
-							<div class="row">
-								<div class="col-sm-8">
-									<label for="heading">Enter which direction the rover should be facing to start (Enter N for North, E for East, S for South, or W for West)</label>
-								</div>
-								<div class="col-sm-4">
-									<input required id="heading" name="heading-1" type="text" placeholder="Ex: N" pattern="^[NESWnesw]$">
-									<p class="error"></p>
-								</div>
-							</div> -->
-				
-						<!-- <h2>How should the rover move?</h2>
-							<div class="row">
-								<div class="col-sm-8">
-									<label for="movements">Enter instructions for how the rover should move. Enter L to make it turn left, R to make it turn right, or M to make it move one unit in the direction it's currently facing. You can give it multiple instructions all at once.</label>
-								</div>
-								<div class="col-sm-4">
-									<input required id="movements" name="movements" type="text" placeholder="Ex: LMMRLM" pattern="^[LRMlrm]+$">
-									<p class="error"></p>
-								</div>
-							</div> -->
-					</fieldset>
-				
-					<!-- <button id="new-rover" type="button">Add instructions for another rover</button> -->
-				
-					<button id="transmit" type="button">Transmit!</button>
-				</form>
-				<p id="results"></p>
-			</div>
-		</div>
-	</div>
-	<script type="text/javascript" src="../js/main.js"></script>
-	<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-</body>
-</html>
 
+<head>
+    <meta charset="UTF-8">
+    <title>Mars Rover</title>
+    <link rel="stylesheet" href="../css/rover.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+<body>
+    <div id="intro">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>Mars Rovers</h1>
+                    <p>You are a NASA scientist sending instructions to Mars rovers.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <form action="">
+                    <fieldset>
+                        <legend>How large of an area should the rovers explore?</legend>
+                        <div class="row">
+                            <div class="form-group col-sm-4">
+                                <input required type="text" id="grid-x" name="grid-x" placeholder="Ex: 5" pattern="^\d+$">
+                                <label for="grid-x">units wide (X)</label>
+                                <div class="error"></div>
+                            </div>
+                            <div class="col-sm-1">
+                                <p>by</p>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <input required type="text" id="grid-y" name="grid-y" placeholder="Ex: 5" pattern="^\d+$">
+                                <label for="grid-y">units long (Y)</label>
+                                <div class="error"></div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>What should the rovers do?</legend>
+                        <label for="instructions" class="row">
+                            <div class="col-sm-12">
+                                <p>Enter 2 lines of instructions for each rover. As an example for one rover:</p>
+                            </div>
+                            <div class="col-sm-6">
+                                <p>On the first line, type:</p>
+                                <ul>
+                                    <li>a starting X position,</li>
+                                    <li>a starting Y position,</li>
+                                    <li>and a direction the rover should start out facing: N for North, E for East, S for South, or W for West.</li>
+                                    </li>
+                                    <li>For example: 1 2 N</li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-6">
+                                <p>On the second line, type in any combination:</p>
+                                <ul>
+                                    <li>L to turn left,</li>
+                                    <li>R to turn right, or</li>
+                                    <li>M to move forward</li>
+                                    <li>For example: LMLMLMLMR</li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-12">
+                                <p>Repeat for each additional rover.</p>
+                            </div>
+                        </label>
+                        <div class="row">
+                        	<div class="col-sm-6">
+                        	    <textarea required id="instructions" name="instructions" type="text" placeholder="Ex: 1 2 N&#x0a;LMLMLMLMM&#x0a;3 3 E&#x0a;MMRMMRMRRM" pattern="^\d+ \d+ $"></textarea>
+                        	    <div class="error"></div>
+                        	    <button id="transmit" class="btn btn-lg btn-cta" type="button">Transmit!</button>
+                        	</div>
+                        	<div class="col-sm-6">
+                        		<p class="h4">Results:</p>
+                        	    <p id="results"></p>
+                        	</div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="../js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</body>
+
+</html>

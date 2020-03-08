@@ -1,16 +1,67 @@
-input:invalid {
-	outline: 3px solid #f00;
-}
-
-form fieldset {
-	margin-top: 2em;
-}
-
-.error {
-	font-weight: bold;
-	color: #f00;
-}
-
 .uppercase {
 	text-transform: uppercase;
 }
+
+#intro {
+	background-color: #be3c1e;
+	padding: 2em 0;
+	color: #fff;
+}
+
+#intro p {
+	font-size: 1.5em;
+}
+
+form {
+	padding: 3em 0 5em;
+}
+
+form fieldset {
+	margin-top: 1em;
+}
+
+form input, form textarea {
+	display: block;
+	width: 100%;
+	outline: 3px solid #1ab269;
+    border: none;
+    padding: 5px;
+}
+
+form input {
+    margin: 0 0 .25em;
+}
+
+form textarea {
+    margin: 0 0 1em;
+}
+
+form input:invalid, form textarea:invalid {
+	outline: 3px solid #be3c1e;
+}
+
+form .error {
+	font-weight: bold;
+	color: #be3c1e;
+}
+
+form #instructions {
+	min-height: 175px;
+}
+
+form .btn-cta {
+	color: #fff;
+	background-color: #be3c1e;
+	border-radius: 0;
+
+}
+
+form .btn-cta:hover,
+form .btn-cta:active,
+form .btn-cta:focus {
+	color: #fff;
+	background-color: #aa2f12;
+}
+
+
+
