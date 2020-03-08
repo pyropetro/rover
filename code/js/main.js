@@ -13,10 +13,9 @@ function Rover (grid) {
 	this.x = 0;
 	this.y = 0;
 	this.z = 0;
+
 	/* Heading in degrees */
 	this.degrees;
-
-	/*console.log(`creating Rover at ${this.x}, ${this.y}, ${this.z}`);*/
 
 	/* Enable rover to look up degree equivalent of heading */
 	this.directions = {
@@ -58,18 +57,6 @@ function Rover (grid) {
 			message: ''
 		};
 
-		/*if (x < 0 || this.grid.x < x) {
-			console.log('x out of bounds');
-			positionResult.isValid = false;
-			positionResult.errorAtX = x;
-		}
-		
-		if (y < 0 || this.grid.y < y) {
-			console.log('y out of bounds');
-			positionResult.isValid = false;
-			positionResult.errorAtY = y;
-		}*/
-
 		if (x < 0 || this.grid.x < x ||
 			y < 0 || this.grid.y < y) {
 			positionResult.isValid = false;
@@ -77,18 +64,9 @@ function Rover (grid) {
 		}
 
 		return positionResult;
-
-
-		/*if (coordinate < 0 || this.grid[coordinate] < coordinate) {
-			return false;
-		}
-		else {
-			return true;
-		}*/
 	}
 
 	this.readMovements = function (movements) {
-		/*let movements = movementsRaw.toLowerCase();*/
 
 		console.log('reading movements: ' + movements);
 
@@ -97,38 +75,25 @@ function Rover (grid) {
 		let triedPosition = {};
 
 		for (const char of movements) {
-			/*inBounds = true;
+			switch (char) {
+				case 'l':
+					this.turn('l');
+					break;
+				case 'r':
+					this.turn('r');
+					break;
+				case 'm':
+					triedPosition = this.move();
 
-			if (inBounds) {*/
-				switch (char) {
-					case 'l':
-						this.turn('l');
-						break;
-					case 'r':
-						this.turn('r');
-						break;
-					case 'm':
-						triedPosition = this.move();
-
-						if (!triedPosition.isValid) {
-							inBounds = false;
-							return `Rover moving out of bounds, stopped at ${this.x} ${this.y} ${this.z}`;
-						}
-						break;
-					default:
-						result = `Invalid movement command "${char}"`;
-				}
-			/*}
-			else {
-			}*/
+					if (!triedPosition.isValid) {
+						inBounds = false;
+						return `Rover moving out of bounds, stopped at ${this.x} ${this.y} ${this.z}`;
+					}
+					break;
+				default:
+					result = `Invalid movement command "${char}"`;
+			}
 		}
-
-		/*if (!valid) {
-			result = 'Invalid input';
-		}
-		else {
-			result = this.roverToNasa();
-		}*/
 
 		result = `Final position ${this.x} ${this.y} ${this.z}`;
 
@@ -137,7 +102,6 @@ function Rover (grid) {
 
 	/* Move one point in the current direction */
 	this.move = function () {
-		console.log('moving');
 
 		/* Figure out how to move in x and y. Finding the sine of the current heading gives you x, and cosine gives you how to move in y */
 		let x = Math.round(Math.sin( this.degToRad() ));
@@ -170,9 +134,6 @@ function Rover (grid) {
 		else if (direction == 'r') {
 			this.degrees += this.turnIncrement;
 		}
-		/*else {
-			alert('Invalid direction!');
-		}*/
 
 		this.normalizeDirection();
 		this.updateDirection();
@@ -202,12 +163,6 @@ function Rover (grid) {
 
 		this.z = dirFound;
 	};
-
-
-	/* Transmit new position and heading back to NASA */
-	/*this.roverToNasa = function (message) {
-		return message;
-	};*/
 }
 
 
@@ -223,8 +178,6 @@ function reset() {
 	for (let i=0; i< errors.length; i++) {
 		errors[i].innerHTML = '';
 	}
-
-	/*select('#results').innerHTML = '';*/
 }
 
 
@@ -297,37 +250,9 @@ function isValidString(str, regex) {
 	return new RegExp(regex).test(str);
 }
 
-/*function isInBounds( {
-
-	}lineNum, x, y, grid) {
-	let hasErrors = false;
-
-	if (x < 0 || grid.x < x) {
-		addInstrError(lineNum, 'X coordinate', x, `Must be between 0 and ${grid.x}.`);
-		hasErrors = true;
-	}
-	
-	if (y < 0 || grid.y < y) {
-		addInstrError(lineNum, 'Y coordinate', y, `Must be between 0 and ${grid.y}.`);
-		hasErrors = true;
-	}
-
-
-
-	return hasErrors ? false : true;
-}*/
-
 
 /* Check if Line 1 is separated by spaces */
 function isLine1CorrectFormat (lineNum, line1) {
-
-	/*if (splitLine.length <= 1) {
-		addInstrError(lineNum, 'positioning', line1, 'Make sure coordinates are separated by spaces.');
-		return false;
-	}
-	else {
-		return splitLine;
-	}*/
 
 	if (!isValidString(line1, /^\d+ \d+ [nesw]$/)) {
 		addInstrError(lineNum, 'formatting', line1, 'Should be 2 numbers and a direction name (N, E, S, or W), separated by spaces.');
@@ -350,33 +275,6 @@ function isLine2CorrectFormat (lineNum, line2) {
 		return line2;
 	}
 }
-
-
-/* Check if Line 1 initial position entries are valid */
-/*function isInitXYValid (lineNum, splitLine, grid) {
-	let initialPosition = {};
-	/*let x = ;
-	let y = splitLine[1];
-	let z = splitLine[1];
-
-	if (!splitLine) {
-		return false;
-	}
-
-	initialPosition.x = parseInt(splitLine[0]);
-	initialPosition.y = parseInt(splitLine[1]);
-	initialPosition.z = splitLine[2];
-
-
-	if (!isInBounds( {
-
-	}lineNum, initialPosition.x, initialPosition.y, grid)) {
-		return false;
-	}
-	else {
-		return initialPosition;
-	}
-}*/
 
 
 /* Separate the raw input from the instructions field into commands to pass to the appropriate rover, if valid */
@@ -403,20 +301,20 @@ function parseInstructions (instructionsRaw, grid) {
 		console.log('current line: ', currentLine);
 		let lineNum = i + 1;
 
-		/*************** Validate Line 1 **************/
+		/* Validate Line 1 */
 		if (i  % 2 == 0) {
 			instrLine1 = currentLine;
 			
 			splitLine1 = isLine1CorrectFormat(lineNum, instrLine1);
 			console.log('splitLine1: '); 
 			console.log(splitLine1); 
-			/*initialPosition = isInitXYValid(lineNum, splitLine1, grid);*/
 
-			if (!splitLine1 /*|| !initialPosition*/ ) {
+			if (!splitLine1) {
 				noErrors = false;
 				continue;
 			}
 		}
+		/* Validate Line 2 */
 		else if (i % 2 == 1) {
 			line2 = '';
 
@@ -449,125 +347,6 @@ function parseInstructions (instructionsRaw, grid) {
 	console.log('Instructions: ' + JSON.stringify(parsedInstructions));
 	return parsedInstructions;
 
-
-	/* Check if separated by spaces */
-	/* - If not, add error */
-	/* - If so, split at spaces */
-
-
-	/* Check if first character is a number */
-	/* - If not, add error */
-	/* - If so, check if it's between 0 and grid bound x */
-	/* 		- If not, add error */
-	/*		- If so, add it to temp obj x */
-
-	/* Check if second character is a number */
-	/* - If not, add error */
-	/* - If so, check if it's between 0 and grid bound x */
-	/* 		- If not, add error */
-	/*		- If so, add it to temp obj y */
-
-	/* Check if third character is n,e,s,w */
-	/* - If not, add error */
-	/* - If so, add it to temp obj z */
-
-
-
-
-	/*************** Line 2 **************/
-
-	/* Check if line 2 is l,r,m */
-	/* - If not, add error */
-	/* - If so, add it to temp obj movement */
-
-
-
-	/* If no errors, push the temp obj to the instruction array */
-	/* If errors, push a null */
-
-
-
-
-
-/*
-	for (let i=0; i<instructionLines.length; i++) {
-		if (i  % 2 == 0) {
-
-		}
-		else if (i % 2 == 1) {
-
-		}
-	}*/
-
-
-
-
-	/*for (let i=0; i<instructionLines.length; i++) {
-		let currentLine = instructionLines[i];
-		let instrLine1 = [];
-		let instrLine2 = '';
-
-		if (i  % 2 == 0) {
-			
-			instrSet = {};
-			instrLine1 = currentLine.split(' ');
-			instrSet.x = parseInt(instrLine1[0]);
-			instrSet.y = parseInt(instrLine1[1]);
-			instrSet.z = instrLine1[2].toLowerCase();
-
-			if ( isNaN(instrSet.x)) {
-				instructionError += `Invalid X coordinate: ${instrLine1[0]}<br>`;
-				noErrors = false;
-			}
-			
-			if ( isNaN(instrSet.y)) {
-				instructionError += `Invalid Y coordinate: ${instrLine1[1]}<br>`;
-				noErrors = false;
-			}
-
-
-			let zIsValid = new RegExp(regex/.test[nesw]+/).test(instrSet.z);
-
-			if ( !zIsValid ) {
-				instructionError += `Invalid heading: ${instrLine1[2]}<br>`;
-				noErrors = false;
-			}
-
-		}
-		else if (i % 2 == 1) {
-
-			instrLine2 = currentLine.toLowerCase();
-
-			let mIsValid = new RegExp(/[lrm]+/).test(instrLine2);
-
-			console.log(instrLine2);
-
-			if (!mIsValid) {
-				instructionError += `Invalid movement instructions: ${instrLine2}<br>`;
-				noErrors = false;
-			}
-			else {
-				instrSet.movements = instrLine2;
-			}
-
-			instructions.push(instrSet);
-			console.log('Instruction set: ' + JSON.stringify(instrSet));
-			
-		}
-
-
-	}
-
-
-		
-	if (!noErrors) {
-		showError('#instructions', instructionError);
-		return;
-	}
-	else {
-		console.log('Instructions: ' + JSON.stringify(instructions));
-		return instructions;
-	}*/
 }
 
 
@@ -621,19 +400,10 @@ function main () {
 					result = rover.readMovements(instrSet.movements);
 				}
 
-
-
-			/*addInstrError(lineNum, 'X coordinate', x, `Must be between 0 and ${grid.x}.`);*/
-
 				printResult(roverNum, result);
 			}
-
 		}
-		
-
-
 	});
-
 }
 
 
