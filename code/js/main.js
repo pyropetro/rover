@@ -10,9 +10,9 @@ function Rover (grid) {
 	}
 
 	/* Initialize position and heading */
-	this.x = 0;
-	this.y = 0;
-	this.z = 0;
+	this.x;
+	this.y;
+	this.z;
 
 	/* Heading in degrees */
 	this.degrees;
@@ -34,9 +34,8 @@ function Rover (grid) {
 
 	/* Initialize rover position */
 	this.startAt = function (x, y, z) {
-		let positionResult = this.isInBounds(x, y);
 
-		if (!positionResult.isValid) {
+		if (!this.isInBounds(x, y)) {
 			return false;
 		}
 		else {
@@ -44,35 +43,28 @@ function Rover (grid) {
 			this.y = y;
 			this.z = z;
 			this.degrees = this.directions[this.z];
-			console.log(`starting at: ${this.x} ${this.y} ${this.z}`);
 			return true;
 		}
-
-
 	}
 
+
+	/* Check if x and y coordinates are within the grid bounds (between 0 and the grid length and width respectively) */
 	this.isInBounds = function (x, y) {
-		let positionResult = {
-			isValid: true,
-			message: ''
-		};
 
 		if (x < 0 || this.grid.x < x ||
 			y < 0 || this.grid.y < y) {
-			positionResult.isValid = false;
-			positionResult.message = `out of bounds at ${x} ${y} ${this.z}`
+			return false;
 		}
-
-		return positionResult;
+		else {
+			return true;
+		}
 	}
 
+
+	/* Execute movement instructions input by user */
 	this.readMovements = function (movements) {
 
-		console.log('reading movements: ' + movements);
-
-		let result = '';
-		let valid = true;
-		let triedPosition = {};
+		let roverMoved = false;
 
 		for (const char of movements) {
 			switch (char) {
@@ -83,47 +75,49 @@ function Rover (grid) {
 					this.turn('r');
 					break;
 				case 'm':
-					triedPosition = this.move();
+					/* Test if moving would take the rover out of bounds. If it does, stop moving and return current position */
+					roverMoved = this.move();
 
-					if (!triedPosition.isValid) {
-						inBounds = false;
-						return `Rover moving out of bounds, stopped at ${this.x} ${this.y} ${this.z}`;
+					if (!roverMoved) {
+						return `Moving out of bounds, stopped at ${this.x} ${this.y} ${this.z}`;
 					}
 					break;
 				default:
-					result = `Invalid movement command "${char}"`;
+					return `Invalid movement command "${char}"`;
 			}
 		}
 
-		result = `Final position ${this.x} ${this.y} ${this.z}`;
-
-		return result;
+		/* If entire line of instructions was executed successfully, return final position */
+		return `Final position ${this.x} ${this.y} ${this.z}`;
 	}
 
-	/* Move one point in the current direction */
+
+	/* Move one grid point in the current direction, if it wouldn't take the rover out of bounds */
 	this.move = function () {
 
-		/* Figure out how to move in x and y. Finding the sine of the current heading gives you x, and cosine gives you how to move in y */
+		/* Figure out how to move in x and y. Finding the sine of the current heading (converted to radians) gives you x, and cosine gives you how to move in y */
 		let x = Math.round(Math.sin( this.degToRad() ));
 		let y = Math.round(Math.cos( this.degToRad() ));
 
+		/* Test if new position would be in bounds. Rover only actually moves if in bounds. Otherwise it stops */
 		let newX = this.x + x;
 		let newY = this.y + y;
-		let triedPosition = this.isInBounds(newX, newY);
+		let inBounds = this.isInBounds(newX, newY);
 
-		if (triedPosition.isValid) {
+		if (inBounds) {
 			this.x = newX;
 			this.y = newY;
 		}
 
-		console.log('new position: ' + this.x + this.y);
-		return triedPosition;
+		return inBounds;
 	};
 
-	/* Convert heading in degrees to radians */
+
+	/* Convert heading in degrees to radians - helps figure out how to move on the grid */
 	this.degToRad = function () {
 		return this.degrees * ( Math.PI / 180 );
 	};
+
 
 	/* Turn 90 degrees to the left or right */
 	this.turn = function (direction) {
@@ -137,12 +131,10 @@ function Rover (grid) {
 
 		this.normalizeDirection();
 		this.updateDirection();
-
-		console.log('new direction: ' + this.z);
-
 	};
 
-	/*  Make sure degrees stays between 0 and 359 to make converting back to direction names easier */
+
+	/*  Make sure degrees stay between 0 and 359 to make converting back to direction names easier */
 	this.normalizeDirection = function () {
 		if (this.degrees < 0) {
 			this.degrees += this.fullTurn;
@@ -151,6 +143,7 @@ function Rover (grid) {
 			this.degrees -= this.fullTurn;
 		}
 	};
+
 
 	/* Find out which direction is being faced. North is assumed to be 0 degrees */
 	this.updateDirection = function () {
@@ -168,20 +161,18 @@ function Rover (grid) {
 
 
 
-
-
 /****************** UI functions ******************/
 
-/* Clears any error messages from previous transmissions in the UI */
+/* Clears any messages from previous transmissions in the UI */
 function reset() {
-	let errors = select('.error, #results');
-	for (let i=0; i< errors.length; i++) {
-		errors[i].innerHTML = '';
+	let messages = select('.error, #results');
+	for (let i=0; i< messages.length; i++) {
+		messages[i].innerHTML = '';
 	}
 }
 
 
-/* Selects the specified DOM element(s). Makes it so you don't have to use querySelector or getElementById/Class constantly, similar to using jQuery */
+/* Selects the specified DOM element(s). Makes it so you don't have to use querySelector or getElementById/Class constantly, similar to using jQuery selection */
 function select (selector) {
 	let selection = document.querySelectorAll(selector);
 	let finalSelection = null;
@@ -194,6 +185,7 @@ function select (selector) {
 	}
 	else {
 		console.error(`Invalid selector! ${selector}`);
+		return false;
 	}
 
 	return finalSelection;
@@ -205,6 +197,7 @@ function getValue (selector) {
 	let val = select(selector).value;
 	if (val == null) {
 		console.error(`${selector} has no value attribute!`);
+		return false;
 	}
 	return val;
 }
@@ -227,16 +220,20 @@ function getNum(selector) {
 	}
 }
 
+
 /* Show an error message in the UI */
 function showError(selector, message) {
 	select(`${selector} ~ .error`).innerHTML = message;
 }
+
 
 /* Add a line to the instruction errors output in the UI */
 function addInstrError(lineNum, elementName, elementVal, message) {
 	select('#instructions ~ .error').innerHTML += `<p>Line ${lineNum}: Invalid ${elementName} "${elementVal}." ${message}</p>`;
 }
 
+
+/* Display each rover's final status in the UI */
 function printResult(roverNum, result) {
 	select('#results').innerHTML += `<p>Rover ${roverNum}: <span class="uppercase">${result}</span></p>`;
 }
@@ -245,13 +242,13 @@ function printResult(roverNum, result) {
 
 /****************** Validation functions ******************/
 
-/* Make sure string is in correct format */
+/* Test if a string is in the correct format */
 function isValidString(str, regex) {
 	return new RegExp(regex).test(str);
 }
 
 
-/* Check if Line 1 is separated by spaces */
+/* Check if Line 1 contains 2 numbers and a direction name separated by spaces. If it does, split it into individual elements */
 function isLine1CorrectFormat (lineNum, line1) {
 
 	if (!isValidString(line1, /^\d+ \d+ [nesw]$/)) {
@@ -259,12 +256,12 @@ function isLine1CorrectFormat (lineNum, line1) {
 		return false;
 	}
 	else {
-		console.log(line1.split(' '));
 		return line1.split(' ');
 	}
 }
 
-/* Check if Line 2 is separated by spaces */
+
+/* Check if Line 2 is a string only consisting of L, R, and M */
 function isLine2CorrectFormat (lineNum, line2) {
 
 	if (!isValidString(line2, /^[lrm]+$/)) {
@@ -279,11 +276,13 @@ function isLine2CorrectFormat (lineNum, line2) {
 
 /* Separate the raw input from the instructions field into commands to pass to the appropriate rover, if valid */
 function parseInstructions (instructionsRaw, grid) {
+
+	/* Remove any extra spaces from top or bottom of input, make it all lowercase, split into individual lines */
 	let instructionLines = instructionsRaw.trim().toLowerCase().split('\n');
-	console.log(instructionLines);
-		let instrLine1 = '';
-		let splitLine1 = [];
-		let instrLine2 = '';
+
+	let instrLine1 = '';
+	let splitLine1 = [];
+	let instrLine2 = '';
 	let instrSet = null;
 	let initialPosition = null;
 	let noErrors = true;
@@ -295,32 +294,27 @@ function parseInstructions (instructionsRaw, grid) {
 		noErrors = false;
 	}
 
-
 	for (let i=0; i<instructionLines.length; i++) {
 		let currentLine = instructionLines[i];
-		console.log('current line: ', currentLine);
 		let lineNum = i + 1;
 
 		/* Validate Line 1 */
 		if (i  % 2 == 0) {
 			instrLine1 = currentLine;
-			
 			splitLine1 = isLine1CorrectFormat(lineNum, instrLine1);
-			console.log('splitLine1: '); 
-			console.log(splitLine1); 
 
 			if (!splitLine1) {
 				noErrors = false;
 				continue;
 			}
 		}
-		/* Validate Line 2 */
+		/* Validate Line 2. If both lines are valid, package them into a set of instructions for a rover */
 		else if (i % 2 == 1) {
 			line2 = '';
 
+			/* Remove any spaces from line 2 */
 			instrLine2 = currentLine.replace(/\s/g, '');
 			line2 = isLine2CorrectFormat(lineNum, instrLine2);
-				console.log('line 2: ' + line2);
 
 			if (!line2) {
 				noErrors = false;
@@ -332,22 +326,21 @@ function parseInstructions (instructionsRaw, grid) {
 			else {
 				instrSet = {};
 				instrSet.x = parseInt(splitLine1[0]);
-				console.log(splitLine1);
 				instrSet.y = parseInt(splitLine1[1]);
 				instrSet.z = splitLine1[2];
 				instrSet.movements = line2;
 			}
-				console.log(JSON.stringify(instrSet));
-				parsedInstructions.push(instrSet);
+
+			parsedInstructions.push(instrSet);
 		}
+		/* Reset variables for the next two lines of input */
 		noErrors = true;
 		instrSet = null;
 	}
 
-	console.log('Instructions: ' + JSON.stringify(parsedInstructions));
 	return parsedInstructions;
-
 }
+
 
 
 function main () {
@@ -356,10 +349,8 @@ function main () {
 		x: 0,
 		y: 0
 	}
-
 	let instructionsRaw = '';
 	let instructions = {};
-
 
 	select('#transmit').addEventListener('click', function () {
 
@@ -368,19 +359,18 @@ function main () {
 		grid.x = getNum('#grid-x');
 		grid.y = getNum('#grid-y');
 
-		console.log(grid.x + ' ' + grid.y);
-
-		if (grid.x > 0 || grid.y > 0 ) {
+		if (grid.x > 0 && grid.y > 0 ) {
 			instructionsRaw = getValue('#instructions');
 		}
-
+		else {
+			return;
+		}
 
 		instructions = parseInstructions(instructionsRaw, grid);
 
+		/* For each set of instructions, create a new Rover instance and attempt to execute its commands */
 		for (let i=0; i<instructions.length; i++) {
 			let instrSet = instructions[i];
-			console.log(JSON.stringify(instrSet));
-
 			let roverNum = i + 1;
 			let rover = new Rover(grid);
 			let result = '';
@@ -390,10 +380,10 @@ function main () {
 			}
 			else {
 				let isStarted = rover.startAt(instrSet.x, instrSet.y, instrSet.z);
-				let lineNum = (2 * roverNum) + 1;
+				let lineNum = (2 * i) + 1;
 
 				if (!isStarted) {
-					addInstrError(lineNum, 'starting coordinates', `${instrSet.x} ${instrSet.y}`, 'Must be between 0 and the length/width of the grid');
+					addInstrError(lineNum, 'starting coordinates', `${instrSet.x} ${instrSet.y}`, 'Must be between 0 and the width/length of the grid');
 					result = `Invalid starting coordinates (${instrSet.x}, ${instrSet.y})`
 				}
 				else {
