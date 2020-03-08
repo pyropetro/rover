@@ -41,10 +41,10 @@ When the user clicks the button to submit their input:
 		- Line 1: 
 			- Split at spaces
 			- Make sure starting direction is n, e, s, or w
-			- Convert to all caps
+			- Convert to all lowercase
 		- Line 2:
 			- Pass to Rover instance to be read
-			- Convert to all caps
+			- Convert to all lowercase
 
 - Divide up the input into properties of an object
 	- Group the input for each rover separately
@@ -52,4 +52,4 @@ When the user clicks the button to submit their input:
 - For each rover's instructions that were input:
 	- Create a new Rover instance
 		- Pass the initial position input to the constructor
-	- Parse 
+	- Parse the movement commands
