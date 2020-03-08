@@ -37,14 +37,19 @@ When the user clicks the button to submit their input:
 
 - Validate input
 	- Make sure starting x and y are within bounds of grid
-	- Make sure starting direction is n, e, s, or w
-		- Lowercase all
-	- Parse movement instructions 
+	- Parse instructions
+		- Line 1: 
+			- Split at spaces
+			- Make sure starting direction is n, e, s, or w
+			- Convert to all caps
+		- Line 2:
+			- Pass to Rover instance to be read
+			- Convert to all caps
 
 - Divide up the input into properties of an object
 	- Group the input for each rover separately
 
 - For each rover's instructions that were input:
 	- Create a new Rover instance
-		- Use the initial position input in the constructor
+		- Pass the initial position input to the constructor
 	- Parse 
