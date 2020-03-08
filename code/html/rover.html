@@ -16,14 +16,14 @@
 						<legend>How large of an area should the rovers explore?</legend>
 				
 						<span class="form-group">
-							<input required type="text" id="area-x" name="area-x" placeholder="Ex: 5" pattern="\d+">
-							<label for="area-x">units wide</label>
+							<input required type="text" id="grid-x" name="grid-x" placeholder="Ex: 5" pattern="^\d+$">
+							<label for="grid-x">units wide</label>
 							<p class="error"></p>
 						</span>
 						<span> by</span>
 						<span class="form-group">
-							<input required type="text" id="area-y" name="area-y" placeholder="Ex: 5" pattern="\d+">
-							<label for="area-y">units long</label>
+							<input required type="text" id="grid-y" name="grid-y" placeholder="Ex: 5" pattern="^\d+$">
+							<label for="grid-y">units long</label>
 							<p class="error"></p>
 						</span>
 					</fieldset>
@@ -36,36 +36,49 @@
 									<label for="instructions">Enter instructions for each rover.</label>
 								</div>
 								<div class="col-sm-6">
-									<textarea required id="instructions" name="starting-x-1" type="text" placeholder=""></textarea>
+									<textarea required id="instructions" name="instructions" type="text" placeholder=""></textarea>
 									<p class="error"></p>
 								</div>
 							</div>
 				
 							<!-- <div class="row">
 								<div class="col-sm-8">
-									<label for="starting-y-1">Enter a starting Y coordinate (this must be between 0 and the length of the area)</label>
+									<label for="starting-x">Enter a starting x coordinate (this must be between 0 and the length of the area)</label>
 								</div>
 								<div class="col-sm-4">
-									<input required id="starting-y-1" name="starting-y-1" type="text" placeholder="Ex: 3" pattern="\d+">
+									<input required id="starting-x" name="starting-x" type="text" placeholder="Ex: 3" pattern="^\d+$">
+									<p class="error"></p>
 								</div>
 							</div>
 				
 							<div class="row">
 								<div class="col-sm-8">
-									<label for="heading-1">Enter which direction the rover should be facing to start (Enter N for North, E for East, S for South, or W for West)</label>
+									<label for="starting-y">Enter a starting Y coordinate (this must be between 0 and the length of the area)</label>
 								</div>
 								<div class="col-sm-4">
-									<input required id="heading-1" name="heading-1" type="text" placeholder="Ex: N" pattern="[NESWnesw]">
+									<input required id="starting-y" name="starting-y" type="text" placeholder="Ex: 3" pattern="^\d+$">
+									<p class="error"></p>
+								</div>
+							</div>
+				
+							<div class="row">
+								<div class="col-sm-8">
+									<label for="heading">Enter which direction the rover should be facing to start (Enter N for North, E for East, S for South, or W for West)</label>
+								</div>
+								<div class="col-sm-4">
+									<input required id="heading" name="heading-1" type="text" placeholder="Ex: N" pattern="^[NESWnesw]$">
+									<p class="error"></p>
 								</div>
 							</div> -->
 				
 						<!-- <h2>How should the rover move?</h2>
 							<div class="row">
 								<div class="col-sm-8">
-									<label for="movement">Enter instructions for how the rover should move. Enter L to make it turn left, R to make it turn right, or M to make it move one unit in the direction it's currently facing. You can give it multiple instructions all at once.</label>
+									<label for="movements">Enter instructions for how the rover should move. Enter L to make it turn left, R to make it turn right, or M to make it move one unit in the direction it's currently facing. You can give it multiple instructions all at once.</label>
 								</div>
 								<div class="col-sm-4">
-									<input required id="movement" name="movement" type="text" placeholder="Ex: LMMRLM" pattern="[LRMlrm]+">
+									<input required id="movements" name="movements" type="text" placeholder="Ex: LMMRLM" pattern="^[LRMlrm]+$">
+									<p class="error"></p>
 								</div>
 							</div> -->
 					</fieldset>

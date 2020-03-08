@@ -1,14 +1,22 @@
 /* A class to simulate a Mars rover */
-function Rover (x, y, z) {
+function Rover (grid) {
 
 	/****************** Properties ******************/
 
-	/* Position and heading */
-	this.x = x;
-	this.y = y;
-	this.z = z;
+	/* Pulls from constructor parameters */
+	this.grid = {
+		x: grid.x,
+		y: grid.y
+	}
 
-	console.log(`creating Rover at ${this.x}, ${this.y}, ${this.z}`);
+	/* Initialize position and heading */
+	this.x = 0;
+	this.y = 0;
+	this.z = 0;
+	/* Heading in degrees */
+	this.degrees;
+
+	/*console.log(`creating Rover at ${this.x}, ${this.y}, ${this.z}`);*/
 
 	/* Enable rover to look up degree equivalent of heading */
 	this.directions = {
@@ -18,9 +26,6 @@ function Rover (x, y, z) {
 		w: 270
 	};
 
-	/* Heading in degrees */
-	this.degrees = this.directions[this.z];
-
 	this.turnIncrement = 90;
 	this.fullTurn = 360;
 
@@ -28,35 +33,105 @@ function Rover (x, y, z) {
 
 	/******************* Methods *******************/
 
-	this.readMovements = function (m) {
-		let movements = m.toLowerCase();
+	/* Initialize rover position */
+	this.startAt = function (x, y, z) {
+		let positionResult = this.isInBounds(x, y);
+
+		if (!positionResult.isValid) {
+			return false;
+		}
+		else {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+			this.degrees = this.directions[this.z];
+			console.log(`starting at: ${this.x} ${this.y} ${this.z}`);
+			return true;
+		}
+
+
+	}
+
+	this.isInBounds = function (x, y) {
+		let positionResult = {
+			isValid: true,
+			message: ''
+		};
+
+		/*if (x < 0 || this.grid.x < x) {
+			console.log('x out of bounds');
+			positionResult.isValid = false;
+			positionResult.errorAtX = x;
+		}
+		
+		if (y < 0 || this.grid.y < y) {
+			console.log('y out of bounds');
+			positionResult.isValid = false;
+			positionResult.errorAtY = y;
+		}*/
+
+		if (x < 0 || this.grid.x < x ||
+			y < 0 || this.grid.y < y) {
+			positionResult.isValid = false;
+			positionResult.message = `out of bounds at ${x} ${y} ${this.z}`
+		}
+
+		return positionResult;
+
+
+		/*if (coordinate < 0 || this.grid[coordinate] < coordinate) {
+			return false;
+		}
+		else {
+			return true;
+		}*/
+	}
+
+	this.readMovements = function (movements) {
+		/*let movements = movementsRaw.toLowerCase();*/
+
 		console.log('reading movements: ' + movements);
 
 		let result = '';
 		let valid = true;
+		let triedPosition = {};
 
 		for (const char of movements) {
-			switch (char) {
-				case 'l':
-					this.turn('l');
-					break;
-				case 'r':
-					this.turn('r');
-					break;
-				case 'm':
-					this.move();
-					break;
-				default:
-					valid = false;
-			}
+			/*inBounds = true;
+
+			if (inBounds) {*/
+				switch (char) {
+					case 'l':
+						this.turn('l');
+						break;
+					case 'r':
+						this.turn('r');
+						break;
+					case 'm':
+						triedPosition = this.move();
+
+						if (!triedPosition.isValid) {
+							inBounds = false;
+							return `Rover moving out of bounds, stopped at ${this.x} ${this.y} ${this.z}`;
+						}
+						break;
+					default:
+						result = `Invalid movement command "${char}"`;
+				}
+			/*}
+			else {
+			}*/
 		}
 
-		if (!valid) {
+		/*if (!valid) {
 			result = 'Invalid input';
 		}
 		else {
 			result = this.roverToNasa();
-		}
+		}*/
+
+		result = `Final position ${this.x} ${this.y} ${this.z}`;
+
 		return result;
 	}
 
@@ -68,9 +143,17 @@ function Rover (x, y, z) {
 		let x = Math.round(Math.sin( this.degToRad() ));
 		let y = Math.round(Math.cos( this.degToRad() ));
 
-		this.x += x;
-		this.y += y;
+		let newX = this.x + x;
+		let newY = this.y + y;
+		let triedPosition = this.isInBounds(newX, newY);
+
+		if (triedPosition.isValid) {
+			this.x = newX;
+			this.y = newY;
+		}
+
 		console.log('new position: ' + this.x + this.y);
+		return triedPosition;
 	};
 
 	/* Convert heading in degrees to radians */
@@ -122,11 +205,9 @@ function Rover (x, y, z) {
 
 
 	/* Transmit new position and heading back to NASA */
-	this.roverToNasa = function () {
-		let result = `${this.x} ${this.y} ${this.z}`;
-
-		return result;
-	};
+	/*this.roverToNasa = function (message) {
+		return message;
+	};*/
 }
 
 
@@ -216,7 +297,9 @@ function isValidString(str, regex) {
 	return new RegExp(regex).test(str);
 }
 
-function isValidPosition(lineNum, x, y, grid) {
+/*function isInBounds( {
+
+	}lineNum, x, y, grid) {
 	let hasErrors = false;
 
 	if (x < 0 || grid.x < x) {
@@ -232,7 +315,7 @@ function isValidPosition(lineNum, x, y, grid) {
 
 
 	return hasErrors ? false : true;
-}
+}*/
 
 
 /* Check if Line 1 is separated by spaces */
@@ -251,6 +334,7 @@ function isLine1CorrectFormat (lineNum, line1) {
 		return false;
 	}
 	else {
+		console.log(line1.split(' '));
 		return line1.split(' ');
 	}
 }
@@ -269,11 +353,11 @@ function isLine2CorrectFormat (lineNum, line2) {
 
 
 /* Check if Line 1 initial position entries are valid */
-function isInitXYValid (lineNum, splitLine, grid) {
+/*function isInitXYValid (lineNum, splitLine, grid) {
 	let initialPosition = {};
 	/*let x = ;
 	let y = splitLine[1];
-	let z = splitLine[1];*/
+	let z = splitLine[1];
 
 	if (!splitLine) {
 		return false;
@@ -284,19 +368,24 @@ function isInitXYValid (lineNum, splitLine, grid) {
 	initialPosition.z = splitLine[2];
 
 
-	if (!isValidPosition(lineNum, initialPosition.x, initialPosition.y, grid)) {
+	if (!isInBounds( {
+
+	}lineNum, initialPosition.x, initialPosition.y, grid)) {
 		return false;
 	}
 	else {
 		return initialPosition;
 	}
-}
+}*/
 
 
 /* Separate the raw input from the instructions field into commands to pass to the appropriate rover, if valid */
 function parseInstructions (instructionsRaw, grid) {
 	let instructionLines = instructionsRaw.trim().toLowerCase().split('\n');
 	console.log(instructionLines);
+		let instrLine1 = '';
+		let splitLine1 = [];
+		let instrLine2 = '';
 	let instrSet = null;
 	let initialPosition = null;
 	let noErrors = true;
@@ -311,19 +400,19 @@ function parseInstructions (instructionsRaw, grid) {
 
 	for (let i=0; i<instructionLines.length; i++) {
 		let currentLine = instructionLines[i];
+		console.log('current line: ', currentLine);
 		let lineNum = i + 1;
-		let instrLine1 = [];
-		let instrLine2 = '';
 
 		/*************** Validate Line 1 **************/
 		if (i  % 2 == 0) {
-			let splitLine = [];
 			instrLine1 = currentLine;
 			
-			splitLine = isLine1CorrectFormat(lineNum, instrLine1);
-			initialPosition = isInitXYValid(lineNum, splitLine, grid);
+			splitLine1 = isLine1CorrectFormat(lineNum, instrLine1);
+			console.log('splitLine1: '); 
+			console.log(splitLine1); 
+			/*initialPosition = isInitXYValid(lineNum, splitLine1, grid);*/
 
-			if (!splitLine || !initialPosition) {
+			if (!splitLine1 /*|| !initialPosition*/ ) {
 				noErrors = false;
 				continue;
 			}
@@ -344,9 +433,10 @@ function parseInstructions (instructionsRaw, grid) {
 			}
 			else {
 				instrSet = {};
-				instrSet.x = initialPosition.x;
-				instrSet.y = initialPosition.y;
-				instrSet.z = initialPosition.z;
+				instrSet.x = parseInt(splitLine1[0]);
+				console.log(splitLine1);
+				instrSet.y = parseInt(splitLine1[1]);
+				instrSet.z = splitLine1[2];
 				instrSet.movements = line2;
 			}
 				console.log(JSON.stringify(instrSet));
@@ -496,8 +586,8 @@ function main () {
 
 		reset();
 
-		grid.x = getNum('#area-x');
-		grid.y = getNum('#area-y');
+		grid.x = getNum('#grid-x');
+		grid.y = getNum('#grid-y');
 
 		console.log(grid.x + ' ' + grid.y);
 
@@ -513,13 +603,27 @@ function main () {
 			console.log(JSON.stringify(instrSet));
 
 			let roverNum = i + 1;
+			let rover = new Rover(grid);
+			let result = '';
 
 			if (instrSet == null) {
 				printResult(roverNum, 'Invalid input');
 			}
 			else {
-				let rover = new Rover(instrSet.x, instrSet.y, instrSet.z);
-				let result = rover.readMovements(instrSet.movements);
+				let isStarted = rover.startAt(instrSet.x, instrSet.y, instrSet.z);
+				let lineNum = (2 * roverNum) + 1;
+
+				if (!isStarted) {
+					addInstrError(lineNum, 'starting coordinates', `${instrSet.x} ${instrSet.y}`, 'Must be between 0 and the length/width of the grid');
+					result = `Invalid starting coordinates (${instrSet.x}, ${instrSet.y})`
+				}
+				else {
+					result = rover.readMovements(instrSet.movements);
+				}
+
+
+
+			/*addInstrError(lineNum, 'X coordinate', x, `Must be between 0 and ${grid.x}.`);*/
 
 				printResult(roverNum, result);
 			}
